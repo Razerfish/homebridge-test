@@ -2,7 +2,7 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { ExampleHomebridgePlatform } from './platform';
 
-import { ChildProcess, exec } from 'node:child_process';
+import * as child from 'child_process';
 
 /**
  * Platform Accessory
@@ -106,9 +106,9 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      await exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
+      await child.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
     } else {
-      await exec('sudo python3 ~/lamp.py 0.0');
+      await child.exec('sudo python3 ~/lamp.py 0.0');
     }
 
 
@@ -148,7 +148,7 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    await exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
+    await child.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
