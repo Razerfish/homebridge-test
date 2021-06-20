@@ -2,7 +2,9 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { ExampleHomebridgePlatform } from './platform';
 
-import * as child from 'child_process';
+import * as sudo from 'sudo-js';
+
+sudo.setPassword('raspberry');
 
 /**
  * Platform Accessory
@@ -106,9 +108,11 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      this.platform.log.debug(child.execFileSync('sudo', ['home/pi/env/bin/python', '/home/pi/lamp.py', `${this.exampleStates.Brightness / 100}`]).toString());
+      //this.platform.log.debug(child.execFileSync('sudo', ['home/pi/env/bin/python', '/home/pi/lamp.py', `${this.exampleStates.Brightness / 100}`]).toString());
+      this.platform.log.debug(sudo.exec('/home/pi/env/bin/python', ['/home/pi/lamp.py', `${this.exampleStates.Brightness / 100}`]).toString());
     } else {
-      this.platform.log.debug(child.execFileSync('sudo', ['home/pi/env/bin/python', '/home/pi/lamp.py', '0.0']).toString());
+      //this.platform.log.debug(child.execFileSync('sudo', ['home/pi/env/bin/python', '/home/pi/lamp.py', '0.0']).toString());
+      this.platform.log.debug(sudo.exec('home/pi/env/bin/python', ['/home/pi/lamp.py', '0.0']).toString());
     }
 
 
@@ -148,7 +152,8 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    this.platform.log.debug(child.execFileSync('sudo', ['/home/pi/env/bin/python', '/home/pi/lamp.py', `${this.exampleStates.Brightness / 100}`]).toString());
+    //this.platform.log.debug(child.execFileSync('sudo', ['/home/pi/env/bin/python', '/home/pi/lamp.py', `${this.exampleStates.Brightness / 100}`]).toString());
+    this.platform.log.debug(sudo.exec('/home/pi/env/bin/python', ['/home/pi/lamp.py', `${this.exampleStates.Brightness / 100}`]).toString());
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
