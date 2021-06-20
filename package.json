@@ -26,9 +26,7 @@
   "keywords": [
     "homebridge-plugin"
   ],
-  "dependencies": {
-    "sudo-js": "^1.0.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^14.14.31",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
