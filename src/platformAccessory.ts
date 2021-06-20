@@ -61,12 +61,14 @@ export class ExamplePlatformAccessory {
      * can use the same sub type id.)
      */
 
+    /*
     // Example: add two "motion sensor" services to the accessory
     const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
       this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
 
     const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
       this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
+    /*
 
     /**
      * Updating characteristics values asynchronously.
@@ -77,6 +79,7 @@ export class ExamplePlatformAccessory {
      * the `updateCharacteristic` method.
      *
      */
+    /*
     let motionDetected = false;
     setInterval(() => {
       // EXAMPLE - inverse the trigger
@@ -89,6 +92,7 @@ export class ExamplePlatformAccessory {
       this.platform.log.debug('Triggering motionSensorOneService:', motionDetected);
       this.platform.log.debug('Triggering motionSensorTwoService:', !motionDetected);
     }, 10000);
+    */
   }
 
   /**
