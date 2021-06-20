@@ -2,6 +2,9 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { ExampleHomebridgePlatform } from './platform';
 
+import ChildProcess from 'child_process';
+import { ChildProcess, exec } from 'node:child_process';
+
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
@@ -103,6 +106,13 @@ export class ExamplePlatformAccessory {
     // implement your own code to turn your device on/off
     this.exampleStates.On = value as boolean;
 
+    if (this.exampleStates.On) {
+      await ChildProcess.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
+    } else {
+      await ChildProcess.exec('sudo python3 ~/lamp.py 0.0');
+    }
+
+
     this.platform.log.debug('Set Characteristic On ->', value);
   }
 
@@ -138,6 +148,8 @@ export class ExamplePlatformAccessory {
   async setBrightness(value: CharacteristicValue) {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
+
+    await exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
