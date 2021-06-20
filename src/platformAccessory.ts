@@ -106,9 +106,9 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      await child.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
+      this.platform.log(child.execSync(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`));
     } else {
-      await child.exec('sudo python3 ~/lamp.py 0.0');
+      this.platform.log(child.exec('sudo python3 ~/lamp.py 0.0'));
     }
 
 
@@ -148,7 +148,7 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    await child.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
+    this.platform.log(child.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`));
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
