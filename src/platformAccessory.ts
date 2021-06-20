@@ -106,9 +106,9 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      this.platform.log.debug(child.execSync(`sudo ~./env/bin/python ~/lamp.py ${this.exampleStates.Brightness / 100}`).toString());
+      this.platform.log.debug(child.execSync(`sudo /home/pi/env/bin/python ~/lamp.py ${this.exampleStates.Brightness / 100}`).toString());
     } else {
-      this.platform.log.debug(child.execSync('sudo ~./env/bin/python ~/lamp.py 0.0').toString());
+      this.platform.log.debug(child.execSync('sudo /home/pi/env/bin/python ~/lamp.py 0.0').toString());
     }
 
 
@@ -148,7 +148,7 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    this.platform.log.debug(child.execSync(`sudo ~./env/bin/python ~/lamp.py ${this.exampleStates.Brightness / 100}`).toString());
+    this.platform.log.debug(child.execSync(`sudo /home/pi/env/bin/python ~/lamp.py ${this.exampleStates.Brightness / 100}`).toString());
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
