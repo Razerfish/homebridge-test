@@ -2,7 +2,6 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { ExampleHomebridgePlatform } from './platform';
 
-import ChildProcess from 'child_process';
 import { ChildProcess, exec } from 'node:child_process';
 
 /**
@@ -107,9 +106,9 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      await ChildProcess.exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
+      await exec(`sudo python3 ~/lamp.py ${this.exampleStates.Brightness / 100}`);
     } else {
-      await ChildProcess.exec('sudo python3 ~/lamp.py 0.0');
+      await exec('sudo python3 ~/lamp.py 0.0');
     }
 
 
