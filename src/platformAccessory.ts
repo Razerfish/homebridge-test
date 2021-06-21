@@ -2,7 +2,8 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { ExampleHomebridgePlatform } from './platform';
 
-import * as child from 'child_process';
+import * as http from 'http';
+import * as qs from 'querystring';
 
 /**
  * Platform Accessory
@@ -106,9 +107,51 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      this.platform.log.debug(child.execSync('python3 /home/pi/test.py 1').toString());
+      const postData = qs.stringify({ type: 'brightness', data: 1.0 });
+
+      http.request({
+        'host': 'http://raspberrypi.local',
+        'port': '8685',
+        'method': 'POST',
+        'headers': {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(postData),
+        },
+      }, (res) => {
+        res.setEncoding('utf-8');
+
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          this.platform.log.debug(data);
+        });
+      });
     } else {
-      this.platform.log.debug(child.execSync('python3 /home/pi/test.py 0').toString());
+      const postData = qs.stringify({ type: 'brightness', data: 0.0 });
+
+      http.request({
+        'host': 'http://raspberrypi.local',
+        'port': '8685',
+        'method': 'POST',
+        'headers': {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(postData),
+        },
+      }, (res) => {
+        res.setEncoding('utf-8');
+
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          this.platform.log.debug(data);
+        });
+      });
     }
 
 
@@ -148,7 +191,28 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    this.platform.log.debug(child.execSync(`python3 /home/pi/test.py ${this.exampleStates.Brightness / 100}`).toString());
+    const postData = qs.stringify({ type: 'brightness', data: this.exampleStates.Brightness });
+
+    http.request({
+      'host': 'http://raspberrypi.local',
+      'port': '8685',
+      'method': 'POST',
+      'headers': {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+      },
+    }, (res) => {
+      res.setEncoding('utf-8');
+
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        this.platform.log.debug(data);
+      });
+    });
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
