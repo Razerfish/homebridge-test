@@ -2,7 +2,7 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { ExampleHomebridgePlatform } from './platform';
 
-import * as net from 'net';
+import * as child from 'child_process';
 
 /**
  * Platform Accessory
@@ -106,15 +106,9 @@ export class ExamplePlatformAccessory {
     this.exampleStates.On = value as boolean;
 
     if (this.exampleStates.On) {
-      let s = new net.Socket();
-      s.connect(8685, "raspberrypi.local", () => {
-        s.write(JSON.stringify({ "type": "brightness", "data": 1 }));
-      });
+      this.platform.log.debug(child.execSync(`/home/pi/lamp.sh ${this.exampleStates.Brightness / 100}`).toString());
     } else {
-      let s = new net.Socket();
-      s.connect(8685, "raspberrypi.local", () => {
-        s.write(JSON.stringify({ "type": "brightness", "data": 0 }));
-      });
+      this.platform.log.debug(child.execSync('/home/pi/lamp.sh 0.0').toString());
     }
 
 
@@ -154,10 +148,7 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    let s = new net.Socket();
-    s.connect(8685, "raspberrypi.local", () => {
-      s.write(JSON.stringify({ "type": "brightness", "data": Math.round(this.exampleStates.Brightness / 100) }));
-    });
+    this.platform.log.debug(child.execSync(`/home/pi/lamp.sh ${this.exampleStates.Brightness / 100}`).toString());
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
