@@ -4,6 +4,7 @@ import { ExampleHomebridgePlatform } from './platform';
 
 import * as http from 'http';
 import * as qs from 'querystring';
+import { pseudoRandomBytes } from 'node:crypto';
 
 /**
  * Platform Accessory
@@ -106,54 +107,41 @@ export class ExamplePlatformAccessory {
     // implement your own code to turn your device on/off
     this.exampleStates.On = value as boolean;
 
+    const postData = { type: 'brightness', data: 0.0 };
     if (this.exampleStates.On) {
-      const postData = qs.stringify({ type: 'brightness', data: 1.0 });
-
-      http.request({
-        'host': 'http://raspberrypi.local',
-        'port': '8685',
-        'method': 'POST',
-        'headers': {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Content-Length': Buffer.byteLength(postData),
-        },
-      }, (res) => {
-        res.setEncoding('utf-8');
-
-        let data = '';
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        res.on('end', () => {
-          this.platform.log.debug(data);
-        });
-      });
+      postData.data = 1.0;
     } else {
-      const postData = qs.stringify({ type: 'brightness', data: 0.0 });
-
-      http.request({
-        'host': 'http://raspberrypi.local',
-        'port': '8685',
-        'method': 'POST',
-        'headers': {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Content-Length': Buffer.byteLength(postData),
-        },
-      }, (res) => {
-        res.setEncoding('utf-8');
-
-        let data = '';
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        res.on('end', () => {
-          this.platform.log.debug(data);
-        });
-      });
+      postData.data = 0.0;
     }
 
+    const post = JSON.stringify(postData);
+
+    const options = {
+      host: 'raspberrypi.local',
+      port: '8000',
+      path: '/',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': post.length,
+      },
+    };
+
+    const req = http.request(options, (res) => {
+      res.setEncoding('utf-8');
+
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        this.platform.log.debug(data);
+      });
+    });
+
+    req.write(post);
+    req.end();
 
     this.platform.log.debug('Set Characteristic On ->', value);
   }
@@ -191,17 +179,20 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    const postData = qs.stringify({ type: 'brightness', data: this.exampleStates.Brightness });
+    const postData = JSON.stringify({ type: 'brightness', data: this.exampleStates.Brightness });
 
-    http.request({
-      'host': 'http://raspberrypi.local',
-      'port': '8685',
-      'method': 'POST',
-      'headers': {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(postData),
+    const options = {
+      host: 'raspberrypi.local',
+      port: '8000',
+      path: '/',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': postData.length,
       },
-    }, (res) => {
+    };
+
+    const req = http.request(options, (res) => {
       res.setEncoding('utf-8');
 
       let data = '';
@@ -213,6 +204,9 @@ export class ExamplePlatformAccessory {
         this.platform.log.debug(data);
       });
     });
+
+    req.write(postData);
+    req.end();
 
     this.platform.log.debug('Set Characteristic Brightness -> ', value);
   }
