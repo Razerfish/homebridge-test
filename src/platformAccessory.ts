@@ -3,8 +3,6 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 import { ExampleHomebridgePlatform } from './platform';
 
 import * as http from 'http';
-import * as qs from 'querystring';
-import { pseudoRandomBytes } from 'node:crypto';
 
 /**
  * Platform Accessory
