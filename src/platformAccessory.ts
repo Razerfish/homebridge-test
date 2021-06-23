@@ -107,9 +107,9 @@ export class ExamplePlatformAccessory {
 
     const postData = { type: 'brightness', data: 0.0 };
     if (this.exampleStates.On) {
-      postData.data = 1.0;
+      postData.data = 100;
     } else {
-      postData.data = 0.0;
+      postData.data = 0;
     }
 
     const post = JSON.stringify(postData);
@@ -141,7 +141,7 @@ export class ExamplePlatformAccessory {
     req.write(post);
     req.end();
 
-    this.platform.log.debug('Set Characteristic On ->', value);
+    this.platform.log.info('Set Characteristic On ->', value);
   }
 
   /**
@@ -206,7 +206,7 @@ export class ExamplePlatformAccessory {
     req.write(postData);
     req.end();
 
-    this.platform.log.debug('Set Characteristic Brightness -> ', value);
+    this.platform.log.info('Set Characteristic Brightness -> ', value);
   }
 
 }
