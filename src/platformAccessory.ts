@@ -25,6 +25,7 @@ export class ExamplePlatformAccessory {
     On: false,
     Brightness: 100,
     Hue: 0.0,
+    Saturation: 0.0,
   };
 
   constructor(
@@ -61,6 +62,10 @@ export class ExamplePlatformAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.Hue)
       .onSet(this.setHue.bind(this))
       .onGet(this.getHue.bind(this));
+
+    this.service.getCharacteristic(this.platform.Characteristic.Saturation)
+      .onSet(this.setSaturation.bind(this))
+      .onGet(this.getSaturation.bind(this));
 
     /**
      * Creating multiple services of the same type.
@@ -141,11 +146,21 @@ export class ExamplePlatformAccessory {
   async setHue(value: CharacteristicValue) {
     this.exampleStates.Hue = value as number;
 
-    this.platform.log.debug(value as string);
+    this.platform.log.debug(`Set hue to: ${value as string}`);
   }
 
   async getHue(): Promise<CharacteristicValue> {
     return this.exampleStates.Hue;
+  }
+
+  async setSaturation(value: CharacteristicValue) {
+    this.exampleStates.Saturation = value as number;
+
+    this.platform.log.debug(`Set saturation to: ${value as string}`);
+  }
+
+  async getSaturation(): Promise<CharacteristicValue> {
+    return this.exampleStates.Saturation;
   }
 
   /**
