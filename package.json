@@ -27,7 +27,7 @@
     "homebridge-plugin"
   ],
   "dependencies": {
-    "hsv-rgb": "^1.0.0"
+    "color-convert": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",

@@ -4,7 +4,7 @@ import { ExampleHomebridgePlatform } from './platform';
 
 import * as http from 'http';
 
-import * as rgb from 'hsv-rgb';
+import * as convert from 'color-convert';
 
 interface Command {
   type: string;
@@ -114,7 +114,7 @@ export class ExamplePlatformAccessory {
     */
   }
 
-  async POSTData(data: Command) {
+  async POSTData(data) {
     const dataString: string = JSON.stringify(data);
 
     const options = {
@@ -148,11 +148,9 @@ export class ExamplePlatformAccessory {
   async setHue(value: CharacteristicValue) {
     this.exampleStates.Hue = value as number;
 
-    const data: Command = { type: 'color', data: rgb(
-      this.exampleStates.Hue,
-      this.exampleStates.Saturation,
-      100,
-    )};
+    const rgb = convert.rgb.hsl(this.exampleStates.Hue, this.exampleStates.Saturation, this.exampleStates.Brightness);
+
+    const data = { type: 'color', data: [rgb.r, rgb.g, rgb.b] };
 
     this.POSTData(data);
 
@@ -166,11 +164,9 @@ export class ExamplePlatformAccessory {
   async setSaturation(value: CharacteristicValue) {
     this.exampleStates.Saturation = value as number;
 
-    const data: Command = { type: 'color', data: rgb(
-      this.exampleStates.Hue,
-      this.exampleStates.Saturation,
-      100,
-    )};
+    const rgb = convert.rgb.hsl(this.exampleStates.Hue, this.exampleStates.Saturation, this.exampleStates.Brightness);
+
+    const data = { type: 'color', data: [rgb.r, rgb.g, rgb.b] };
 
     this.POSTData(data);
 
