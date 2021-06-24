@@ -24,7 +24,7 @@ export class ExamplePlatformAccessory {
   private exampleStates = {
     On: false,
     Brightness: 100,
-    Hue: '',
+    Hue: 0.0,
   };
 
   constructor(
@@ -139,7 +139,7 @@ export class ExamplePlatformAccessory {
   }
 
   async setHue(value: CharacteristicValue) {
-    this.exampleStates.Hue = value as string;
+    this.exampleStates.Hue = value as number;
 
     this.platform.log.debug(value as string);
   }
