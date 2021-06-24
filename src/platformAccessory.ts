@@ -4,6 +4,8 @@ import { ExampleHomebridgePlatform } from './platform';
 
 import * as http from 'http';
 
+import * as rgb from 'hsv-rgb';
+
 interface Command {
   type: string;
   data: number | string | boolean;
@@ -146,6 +148,14 @@ export class ExamplePlatformAccessory {
   async setHue(value: CharacteristicValue) {
     this.exampleStates.Hue = value as number;
 
+    const data: Command = { type: 'color', data: rgb(
+      this.exampleStates.Hue,
+      this.exampleStates.Saturation,
+      100,
+    )};
+
+    this.POSTData(data);
+
     this.platform.log.debug(`Set hue to: ${value as string}`);
   }
 
@@ -155,6 +165,14 @@ export class ExamplePlatformAccessory {
 
   async setSaturation(value: CharacteristicValue) {
     this.exampleStates.Saturation = value as number;
+
+    const data: Command = { type: 'color', data: rgb(
+      this.exampleStates.Hue,
+      this.exampleStates.Saturation,
+      100,
+    )};
+
+    this.POSTData(data);
 
     this.platform.log.debug(`Set saturation to: ${value as string}`);
   }
