@@ -4,6 +4,11 @@ import { ExampleHomebridgePlatform } from './platform';
 
 import * as http from 'http';
 
+interface Command {
+  type: string;
+  data: number | string | boolean;
+}
+
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
@@ -97,22 +102,8 @@ export class ExamplePlatformAccessory {
     */
   }
 
-  /**
-   * Handle "SET" requests from HomeKit
-   * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
-   */
-  async setOn(value: CharacteristicValue) {
-    // implement your own code to turn your device on/off
-    this.exampleStates.On = value as boolean;
-
-    const postData = { type: 'brightness', data: 0.0 };
-    if (this.exampleStates.On) {
-      postData.data = 100;
-    } else {
-      postData.data = 0;
-    }
-
-    const post = JSON.stringify(postData);
+  async POSTData(data: Command) {
+    const dataString: string = JSON.stringify(data);
 
     const options = {
       host: 'raspberrypi.local',
@@ -121,25 +112,38 @@ export class ExamplePlatformAccessory {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': post.length,
+        'Content-Length': dataString.length,
       },
     };
 
     const req = http.request(options, (res) => {
       res.setEncoding('utf-8');
 
-      let data = '';
+      let response = '';
       res.on('data', (chunk) => {
-        data += chunk;
+        response += chunk;
       });
 
       res.on('end', () => {
-        this.platform.log.debug(data);
+        this.platform.log.debug(response);
       });
     });
 
-    req.write(post);
-    req.end();
+    req.write(dataString);
+    req.end;
+  }
+
+  /**
+   * Handle "SET" requests from HomeKit
+   * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
+   */
+  async setOn(value: CharacteristicValue) {
+    // implement your own code to turn your device on/off
+    this.exampleStates.On = value as boolean;
+
+    const data : Command = { type: 'on', data: this.exampleStates.On };
+
+    this.POSTData(data);
 
     this.platform.log.info('Set Characteristic On ->', value);
   }
@@ -177,34 +181,9 @@ export class ExamplePlatformAccessory {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
 
-    const postData = JSON.stringify({ type: 'brightness', data: this.exampleStates.Brightness });
+    const data : Command = { type: 'brightness', data: this.exampleStates.Brightness };
 
-    const options = {
-      host: 'raspberrypi.local',
-      port: '8000',
-      path: '/',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': postData.length,
-      },
-    };
-
-    const req = http.request(options, (res) => {
-      res.setEncoding('utf-8');
-
-      let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      res.on('end', () => {
-        this.platform.log.debug(data);
-      });
-    });
-
-    req.write(postData);
-    req.end();
+    this.POSTData(data);
 
     this.platform.log.info('Set Characteristic Brightness -> ', value);
   }
