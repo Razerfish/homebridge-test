@@ -24,6 +24,7 @@ export class ExamplePlatformAccessory {
   private exampleStates = {
     On: false,
     Brightness: 100,
+    Hue: '',
   };
 
   constructor(
@@ -56,6 +57,10 @@ export class ExamplePlatformAccessory {
     // register handlers for the Brightness Characteristic
     this.service.getCharacteristic(this.platform.Characteristic.Brightness)
       .onSet(this.setBrightness.bind(this));       // SET - bind to the 'setBrightness` method below
+
+    this.service.getCharacteristic(this.platform.Characteristic.Hue)
+      .onSet(this.setHue.bind(this))
+      .onGet(this.getHue.bind(this));
 
     /**
      * Creating multiple services of the same type.
@@ -131,6 +136,16 @@ export class ExamplePlatformAccessory {
 
     req.write(dataString);
     req.end;
+  }
+
+  async setHue(value: CharacteristicValue) {
+    this.exampleStates.Hue = value as string;
+
+    this.platform.log.debug(value as string);
+  }
+
+  async getHue(): Promise<CharacteristicValue> {
+    return this.exampleStates.Hue;
   }
 
   /**
